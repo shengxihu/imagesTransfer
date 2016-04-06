@@ -21,5 +21,38 @@ function imagePreview(){
 	  imgReader.readAsDataURL(file);
 	}
 }
-uploadControl();
-imagePreview();
+function imageTransfer(){
+	var drawing=document.getElementById("image-out"),
+	context=drawing.getContext("2d"),
+	image=document.images[0],
+	image_data,
+	data,
+	i,
+	len,
+	average,
+	red,
+	green,
+	blue,
+	alpha;
+	context.drawImage(image,0,0,319,400);
+	image_data=context.getImageData(0,0,image.width,image.height);
+	data=image_data.data;
+	for (var i = 0,len=data.length; i < len; i+=4) {
+		red=data[i];
+		green=data[i+1];
+		blue=data[i+2];
+		alpha=data[i+3];
+		average=Math.floor((red+green+blue)/3);
+		data[i]=average;
+		data[i+1]=average;
+		data[i+2]=average;
+	};
+	image_data.data=data;
+	context.putImageData(image_data,0,0);
+}
+window.onload=function(){
+	uploadControl();
+	imagePreview();
+	var bt=document.getElementById("bt");
+	bt.onclick=imageTransfer;
+}
